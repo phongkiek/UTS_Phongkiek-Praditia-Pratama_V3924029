@@ -1,0 +1,36 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Ganti path ini sesuai lokasi file Excel kamu
+df = pd.read_excel("D:/UTS statistika dan probabilitas/loan_data_set.xlsx")
+
+# Pastikan kolom 'Dependents' sudah dalam bentuk angka
+df['Dependents'] = pd.to_numeric(df['Dependents'], errors='coerce')
+
+# Filter nasabah yang sudah menikah dan punya lebih dari 1 tanggungan
+filtered_df = df[(df['Married'] == 'Yes') & (df['Dependents'] > 1)]
+
+# Total nasabah dalam kategori tersebut
+total = len(filtered_df)
+
+# Nasabah yang mengembalikan pinjaman (Loan_Status == 'Y')
+returned = len(filtered_df[filtered_df['Loan_Status'] == 'Y'])
+not_returned = total - returned
+
+# Probabilitas bersyarat
+if total > 0:
+    prob = returned / total
+    print(f"Probabilitas nasabah mengembalikan pinjaman (sudah menikah & tanggungan > 1): {prob:.2f}")
+else:
+    print("Tidak ada data nasabah dengan kriteria tersebut.")
+
+# Membuat diagram batang untuk visualisasi
+statuses = ['Mengembalikan', 'Tidak Mengembalikan']
+counts = [returned, not_returned]
+
+plt.figure(figsize=(7, 5))
+plt.bar(statuses, counts, color=['green', 'red'])
+plt.title("Jumlah Nasabah yang Mengembalikan Pinjaman vs Tidak Mengembalikan")
+plt.xlabel("Status Pengembalian Pinjaman")
+plt.ylabel("Jumlah Nasabah")
+plt.show()
